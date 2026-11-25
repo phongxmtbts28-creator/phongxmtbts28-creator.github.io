@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sổ hồ sơ thanh toán</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff1f5;--surface:#fff;--ink:#3b1a28;--muted:#8d6577;--line:#f6cddb;--brand:#d6336c;--brand-d:#a61e4d;--head:#fbd5e2;--row:#fff7fa;
+--ok-b:#d3f5e0;--ok-t:#17653a;--warn-b:#ffe8c7;--warn-t:#8a4a00;--bad-b:#ffd6dc;--bad-t:#a1122e;--info-b:#e1dcff;--info-t:#4331a8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#24121a;--surface:#331924;--ink:#fde7ef;--muted:#c79aae;--line:#5a2c40;--brand:#f06595;--brand-d:#ff8fb3;--head:#4a2234;--row:#2b151f;
+--ok-b:#1c4a31;--ok-t:#9df0bf;--warn-b:#5a3a10;--warn-t:#ffd596;--bad-b:#5c1b28;--bad-t:#ffb3c0;--info-b:#33296b;--info-t:#cfc7ff}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#24121a;--surface:#331924;--ink:#fde7ef;--muted:#c79aae;--line:#5a2c40;--brand:#f06595;--brand-d:#ff8fb3;--head:#4a2234;--row:#2b151f;
+--ok-b:#1c4a31;--ok-t:#9df0bf;--warn-b:#5a3a10;--warn-t:#ffd596;--bad-b:#5c1b28;--bad-t:#ffb3c0;--info-b:#33296b;--info-t:#cfc7ff}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Be Vietnam Pro",system-ui,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px}
+h1{font:600 32px/1.1 Fraunces,Georgia,serif;margin:0;color:var(--brand-d)}
+header p{margin:4px 0 0;color:var(--muted)}
+.tabs{display:flex;gap:6px;background:var(--head);padding:5px;border-radius:999px}
+.tabs button{border:0;background:none;color:var(--ink);font:600 14px inherit;font-family:inherit;padding:8px 18px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--brand);color:#fff}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.bar input,.bar select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.bar input[type=search]{flex:1 1 220px;min-width:0}
+.sp{flex:1}
+.btn{font:600 14px inherit;font-family:inherit;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn:hover{filter:brightness(.96)}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 16px}
+.stat b{display:block;font-size:18px;color:var(--brand-d)}
+.stat span{color:var(--muted);font-size:12px}
+.tw{overflow:auto;max-height:calc(100vh - 250px);min-height:260px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;min-width:900px}
+th{background:var(--head);color:var(--brand-d);text-align:left;font-weight:700;padding:11px 12px;white-space:nowrap;position:sticky;top:0}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:var(--row)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.d{white-space:nowrap}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.ok{background:var(--ok-b);color:var(--ok-t)}.warn{background:var(--warn-b);color:var(--warn-t)}.bad{background:var(--bad-b);color:var(--bad-t)}.info{background:var(--info-b);color:var(--info-t)}.tag{background:var(--head);color:var(--brand-d)}
+.chk{color:var(--brand);font-size:18px}
+.act{white-space:nowrap}
+.act button{border:1px solid var(--line);background:var(--surface);border-radius:8px;color:var(--brand-d);cursor:pointer;font:600 13px inherit;font-family:inherit;padding:3px 10px;margin-left:4px}
+.act button:hover{background:var(--head)}
+tbody tr{cursor:pointer}tbody tr:hover td{background:var(--head)}
+th{z-index:2}th:first-child{left:0;z-index:3}th:last-child{right:0;z-index:3}
+td:first-child,td.act{position:sticky;z-index:1;background:var(--surface)}td:first-child{left:0}td.act{right:0}
+tbody tr:nth-child(even) td:first-child,tbody tr:nth-child(even) td.act{background:var(--row)}
+tbody tr:hover td:first-child,tbody tr:hover td.act{background:var(--head)}
+.empty{padding:40px 16px;text-align:center;color:var(--muted)}
+.al{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:3px 0;white-space:nowrap}.al .n2{font-variant-numeric:tabular-nums;font-weight:600}
+.alloc{grid-column:1/-1}.lbl{display:block;font-weight:600;font-size:13px;color:var(--muted);margin-bottom:6px}
+.alr{display:grid;grid-template-columns:1fr 150px 32px;gap:6px;margin-bottom:6px}.alr button{border:0;background:none;color:var(--brand-d);font-size:20px;cursor:pointer}
+.alr input{font:400 14px inherit;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+#alsum{font-size:13px;font-weight:600;margin-top:8px}
+.al.sub{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:2px}.it{margin:3px 0;min-width:200px}.alr.itr{grid-template-columns:1fr 70px 90px 32px}
+.alr.rcr{grid-template-columns:1fr 130px 32px;padding-bottom:8px;border-bottom:1px dashed var(--line)}.rcr .ra{grid-column:1/3}
+dialog{border:0;border-radius:18px;background:var(--surface);color:var(--ink);padding:0;width:min(640px,94vw);max-height:92vh}
+dialog::backdrop{background:rgba(80,10,40,.45)}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+form h2{grid-column:1/-1;margin:0;font:600 22px Fraunces,Georgia,serif;color:var(--brand-d)}
+label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:13px;color:var(--muted)}
+label.w{grid-column:1/-1}
+label.c{flex-direction:row;align-items:center;gap:8px}
+label input,label select,label textarea{font:400 14px inherit;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+label.c input{width:auto}
+.fa{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
+@media (max-width:560px){form{grid-template-columns:1fr}h1{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><h1>Sổ hồ sơ thanh toán</h1><p>Theo dõi chứng từ, hoàn ứng và hàng gửi đi trong một nơi.</p><p id="st" style="margin:2px 0 0;font-weight:600;font-size:13px"></p></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-pay" aria-selected="true">Thanh toán</button>
+    <button role="tab" id="t-ship" aria-selected="false">Gửi hàng</button>
+    <button role="tab" id="t-dir" aria-selected="false">Danh bạ</button>
+  </div>
+</header>
+<div class="stats" id="stats"></div>
+<div class="bar">
+  <input type="search" id="q" placeholder="Tìm theo nội dung, đơn vị, công trình…" aria-label="Tìm kiếm">
+  <select id="f" aria-label="Lọc trạng thái"></select>
+  <span class="sp"></span>
+  <button class="btn" id="impb" hidden>Nhập từ Google Sheets</button>
+  <button class="btn" id="mgb" hidden>Gộp trùng danh bạ</button>
+  <button class="btn" id="cpb">Sao chép sang Google Sheets</button>
+  <button class="btn" id="csv">Xuất CSV</button>
+  <button class="btn" id="theme" aria-label="Đổi giao diện sáng/tối">Sáng/Tối</button>
+  <button class="btn p" id="add">Thêm dòng mới</button>
+</div>
+<div class="tw"><table><thead id="th"></thead><tbody id="tb"></tbody></table><div class="empty" id="em" hidden>Chưa có dòng nào. Chọn “Thêm dòng mới” để bắt đầu.</div></div>
+</div>
+<datalist id="dl-dir"></datalist><datalist id="dl-proj"></datalist><datalist id="dl-who"></datalist>
+<dialog id="dlg"><form id="fm" method="dialog"></form></dialog>
+<dialog id="cf"><div style="padding:20px;display:grid;gap:14px"><div id="cft" style="font-weight:600"></div><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" id="cfn">Giữ lại</button><button class="btn p" id="cfy">Xóa dòng</button></div></div></dialog>
+<dialog id="imp"><div style="padding:20px;display:grid;gap:10px"><h2 style="margin:0;font:600 22px Fraunces,Georgia,serif;color:var(--brand-d)" id="imph">Nhập danh bạ từ Google Sheets</h2><p id="impp" style="margin:0;color:var(--muted)">Trong Google Sheets, bôi đen các cột A đến D (kể cả dòng tiêu đề), nhấn Ctrl+C rồi dán vào ô dưới. Đơn vị đã có trong danh bạ sẽ được cập nhật, không bị trùng.</p><textarea id="impt" rows="10" aria-label="Dữ liệu dán từ Google Sheets" style="font:13px inherit;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%"></textarea><div id="impr" style="font-weight:600;color:var(--ok-t)"></div><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" id="impx">Đóng</button><button class="btn p" id="impgo">Nhập vào danh bạ</button></div></div></dialog>
+
+<script>
+var SK='ho-so-hong-v1';
+var TONE={'Đã chuyển khoản':'ok','Chưa thanh toán':'bad','Chờ duyệt':'warn','Đã hoàn ứng':'ok','Chưa hoàn ứng':'warn','Không cần hoàn ứng':'info','Chờ gửi':'warn','Đang giao':'info','Đã giao':'ok','Hoàn / Hủy':'bad'};
+var CFG={
+pay:{title:'Thanh toán',filter:'tt2',filterOpts:['Đã hoàn ứng','Chưa hoàn ứng','Không cần hoàn ứng'],filterLabel:'Mọi trạng thái hoàn ứng',cols:[
+ {k:'date',l:'Ngày lập chứng từ',t:'date'},
+ {k:'type',l:'Loại chứng từ',t:'sel',o:['Công nợ khách hàng','Tạm ứng','Chi phí khác']},
+ {k:'desc',l:'Nội dung chi tiết',t:'text',w:1},
+ {k:'amt',l:'Tổng tiền quyết toán (chưa thuế)',t:'money'},
+ {k:'alloc',l:'Phân bổ theo công trình (số tiền chưa thuế)',t:'alloc',w:1},
+ {k:'vat',l:'Thuế VAT',t:'sel',o:['0%','5%','8%','10%']},
+ {k:'gross',l:'Tiền có thuế (đề nghị chuyển)',t:'money'},
+ {k:'unit',l:'Đơn vị (chọn từ danh bạ)',t:'text',lk:1},
+ {k:'acc',l:'Số tài khoản',t:'area',w:1},
+ {k:'inv',l:'Hóa đơn',t:'chk'},
+ {k:'tt1',l:'Tình trạng thanh toán',t:'sel',o:['Đã chuyển khoản','Chưa thanh toán','Chờ duyệt']},
+ 
+ {k:'tt2',l:'Trạng thái hoàn ứng',t:'sel',o:['Đã hoàn ứng','Chưa hoàn ứng','Không cần hoàn ứng']},
+ {k:'rdate',l:'Ngày hoàn ứng',t:'date'},
+ {k:'ramt',l:'Số tiền hoàn ứng thực tế',t:'money'},
+ {k:'diff',l:'Chênh lệch ứng / hoàn',t:'diff'},
+ {k:'note',l:'Ghi chú',t:'text',w:1}]},
+ship:{title:'Gửi hàng',filter:'st',filterOpts:['Chờ gửi','Đang giao','Đã giao','Hoàn / Hủy'],filterLabel:'Mọi trạng thái giao hàng',cols:[
+ {k:'date',l:'Ngày gửi',t:'date'},
+ {k:'rcv',l:'Công ty nhận (chọn từ danh bạ)',t:'text',w:1,lk:1},
+ {k:'who',l:'Người nhận',t:'text',lw:1},
+ {k:'tel',l:'Số điện thoại',t:'text'},
+ {k:'addr',l:'Địa chỉ nhận',t:'area',w:1},
+ {k:'items',l:'Nội dung hàng gửi',t:'items',w:1},
+ {k:'carrier',l:'Đơn vị vận chuyển',t:'text'},
+ {k:'code',l:'Mã vận đơn',t:'text'},
+ {k:'fee',l:'Phí vận chuyển',t:'money'},
+ {k:'cod',l:'Thu hộ (COD)',t:'chk'},
+ {k:'st',l:'Trạng thái',t:'sel',o:['Chờ gửi','Đang giao','Đã giao','Hoàn / Hủy']},
+ {k:'note',l:'Ghi chú',t:'text',w:1}]},
+dir:{title:'Danh bạ',filter:'',filterOpts:[],filterLabel:'',cols:[
+ {k:'name',l:'Tên công ty / đơn vị',t:'text',w:1},
+ {k:'alias',l:'Tên gọi khác (tên ngắn khi gửi hàng, cách nhau bằng dấu ;)',t:'text',w:1},
+ {k:'acc',l:'Số tài khoản và ngân hàng',t:'area',w:1},
+ {k:'rcvs',l:'Người nhận hàng (có thể nhiều người)',t:'rcvs',w:1},
+ 
+ {k:'note',l:'Ghi chú',t:'text',w:1}]}};
+var D={dir:[
+ {name:'Công ty TNHH TM và Vận tải An Quân',acc:'135368888 tại Ngân hàng TMCP Quân Đội (MB) - CN Ninh Bình',addr:'',contact:'',tel:'',note:''},
+ {name:'Công ty TNHH Vận tải Thức Anh',acc:'2323688888 tại Ngân hàng TMCP Quân Đội (MB) - CN Hoài Đức',addr:'',contact:'',tel:'',note:''}],pay:[
+ {date:'2026-01-14',type:'Công nợ khách hàng',desc:'Cước vận chuyển',amt:27000000,proj:'Cầu Nông Giang',unit:'Công ty TNHH TM và Vận tải An Quân',acc:'135368888 tại Ngân hàng TMCP Quân Đội (MB) - CN Ninh Bình',inv:true,tt1:'Đã chuyển khoản',tt2:'Đã hoàn ứng',rdate:'2026-02-02',note:''},
+ {date:'2026-01-14',type:'Công nợ khách hàng',desc:'Cước vận chuyển',amt:9180000,proj:'Cao tốc Mai Châu',unit:'Công ty TNHH Vận tải Thức Anh',acc:'2323688888 tại Ngân hàng TMCP Quân Đội (MB) - CN Hoài Đức',inv:true,tt1:'Đã chuyển khoản',tt2:'Đã hoàn ứng',rdate:'2026-01-20',note:''}],
+ ship:[{date:'2026-11-18',rcv:'Nguyễn Văn A',tel:'0900 000 000',addr:'12 Phố Huế, Hai Bà Trưng, Hà Nội',goods:'Hồ sơ chứng từ (1 túi)',carrier:'Viettel Post',code:'VTP123456',fee:35000,cod:false,st:'Đang giao',note:''}]};
+try{var s=localStorage.getItem(SK);if(s)D=JSON.parse(s)}catch(e){}
+D.dir=D.dir||[];D.dir.forEach(function(d){if(!d.rcvs)d.rcvs=(d.contact||d.tel||d.addr)?[{n:d.contact||'',t:d.tel||'',a:d.addr||''}]:[]});D.ship.forEach(function(r){if(!r.items)r.items=r.goods?[{n:r.goods,q:'',u:''}]:[]});D.pay.forEach(function(r){if(!r.alloc)r.alloc=r.proj?[{p:r.proj,a:r.amt}]:[]});
+var DB=null,dbReady=false,dbT=null;
+function setSt(s,d){var e=$('st');if(!e)return;e.style.color=s=='ok'?'var(--ok-t)':'var(--bad-t)';e.textContent=s=='ok'?'Đã lưu trực tuyến'+(d?' lúc '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2):''):s=='err'?'Chưa lưu được lên máy chủ – hãy bấm "Sao chép sang Google Sheets" để sao lưu':'Chỉ lưu trong trình duyệt này – hãy thường xuyên sao chép sang Google Sheets để sao lưu'}
+function dbSave(){if(!DB||!dbReady)return;clearTimeout(dbT);dbT=setTimeout(function(){Promise.all(['pay','ship','dir'].map(function(k){return DB.doc('data/'+k).set({j:JSON.stringify(D[k])})})).then(function(){setSt('ok',new Date())},function(){setSt('err')})},600)}
+function save(){try{localStorage.setItem(SK,JSON.stringify(D))}catch(e){}dbSave()}
+var cur='pay',editing=-1;
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function vnd(n){return (Number(n)||0).toLocaleString('vi-VN')}
+function dmy(d){if(!d)return '';var p=d.split('-');return p.length==3?p[2]+'/'+p[1]+'/'+p[0]:d}
+function cell(c,r){var v=r[c.k];
+ if(c.t=='date')return '<td class="d">'+dmy(v)+'</td>';
+ if(c.k=='gross'){var g=+v||0;if(!g)return '<td class="n"></td>';var tx=g-(+r.amt||0),ex=Math.round((+r.amt||0)*(parseFloat(r.vat)||0)/100),bd=tx<-1||(r.vat&&Math.abs(tx-ex)>10);return '<td class="n">'+vnd(g)+'<div class="al sub"><span>Thuế'+(r.vat?' '+r.vat:'')+'</span><span class="n2">'+vnd(tx)+'</span></div>'+(bd?'<span class="pill bad">Lệch thuế'+(r.vat?' '+vnd(tx-ex):'')+'</span>':'')+'</td>'}
+ if(c.t=='money')return '<td class="n">'+(v?vnd(v):'')+'</td>';
+ if(c.t=='chk')return '<td style="text-align:center">'+(v?'<span class="chk" aria-label="Có">&#9745;</span>':'<span class="chk" style="opacity:.3" aria-label="Không">&#9744;</span>')+'</td>';
+ if(c.t=='sel')return '<td>'+(v?'<span class="pill '+(TONE[v]||'tag')+'">'+esc(v)+'</span>':'')+'</td>';
+ if(c.t=='diff'){var x=diffOf(r);return '<td>'+(x?'<span class="pill '+x.cls+'">'+x.t+'</span>':'')+'</td>'}
+ if(c.t=='rcvs'){return '<td>'+(v||[]).map(function(a){return '<div class="it"><b>'+esc(a.n||'(chưa có tên)')+'</b>'+(a.t?' – '+esc(a.t):'')+(a.a?'<br><span style="color:var(--muted)">'+esc(a.a)+'</span>':'')+'</div>'}).join('')+'</td>'}
+ if(c.t=='items'){return '<td>'+(v||[]).map(function(a){return '<div class="it">• <b>'+esc(a.n)+'</b>'+(((a.q!==''&&a.q!=null)||a.u)?' – '+esc(((a.q==null?'':a.q)+' '+(a.u||'')).trim()):'')+'</div>'}).join('')+'</td>'}
+ if(c.t=='alloc'){var al=v||[],s=0,h=al.map(function(a){s+=+a.a||0;return '<div class="al"><span class="pill tag">'+esc(a.p)+'</span><span class="n2">'+vnd(a.a)+'</span></div>'}).join(''),df=(+r.amt||0)-s;if(al.length&&Math.abs(df)>1)h+='<span class="pill bad">Lệch phân bổ '+vnd(df)+'</span>';if(!al.length&&r.amt)h='<span class="pill warn">Chưa phân bổ</span>';return '<td>'+h+'</td>'}
+ if(c.t=='tag')return '<td>'+(v?'<span class="pill tag">'+esc(v)+'</span>':'')+'</td>';
+ return '<td>'+esc(v)+'</td>'}
+function rows(){var q=$('q').value.trim().toLowerCase(),f=$('f').value,C=CFG[cur];
+ return D[cur].map(function(r,i){return{r:r,i:i}}).filter(function(x){
+  if(f&&x.r[C.filter]!==f)return false;
+  return !q||JSON.stringify(x.r).toLowerCase().indexOf(q)>-1})}
+function diffOf(r){var a=+r.gross||0;if(!a){return r.ramt?{cls:'bad',t:'Thiếu tiền đề nghị chuyển',n:0}:null}if(r.type!='Tạm ứng'&&!r.ramt)return null;if(!r.ramt)return{cls:'warn',t:'Chờ hoàn ứng',n:0};var d=a-(+r.ramt||0);return d==0?{cls:'ok',t:'Khớp',n:0}:d>0?{cls:'warn',t:'Ứng dư '+vnd(d)+' – nộp lại',n:d}:{cls:'bad',t:'Chi quá '+vnd(-d)+' – bù thêm',n:d}}
+function fillLists(){$('dl-dir').innerHTML=D.dir.reduce(function(o,d){return o.concat([d.name],(d.alias||'').split(';').map(function(a){return a.trim()}).filter(Boolean))},[]).map(function(n){return '<option value="'+esc(n)+'">'}).join('');var ps={};D.pay.forEach(function(r){(r.alloc||[]).forEach(function(a){if(a.p)ps[a.p]=1})});$('dl-proj').innerHTML=Object.keys(ps).map(function(p){return '<option value="'+esc(p)+'">'}).join('')}
+function render(){var C=CFG[cur],L=rows();fillLists();
+ $('th').innerHTML='<tr><th>STT</th>'+C.cols.map(function(c){return '<th>'+c.l+'</th>'}).join('')+'<th></th></tr>';
+ $('tb').innerHTML=L.map(function(x){return '<tr><td>'+(x.i+1)+'</td>'+C.cols.map(function(c){return cell(c,x.r)}).join('')+'<td class="act"><button data-e="'+x.i+'">Sửa</button><button data-d="'+x.i+'">Xóa</button></td></tr>'}).join('');
+ $('em').hidden=L.length>0;
+ var all=D[cur],sum=0;
+ if(cur=='dir'){$('stats').innerHTML='<div class="stat"><b>'+all.length+'</b><span>đơn vị trong danh bạ</span></div>';return}
+ if(cur=='pay'){all.forEach(function(r){sum+=+r.amt||0});
+  var open=all.filter(function(r){return r.tt2=='Chưa hoàn ứng'}).length;
+  var mm=all.filter(function(r){var x=diffOf(r);return x&&x.n}).length;var pt={};all.forEach(function(r){(r.alloc||[]).forEach(function(a){pt[a.p]=(pt[a.p]||0)+(+a.a||0)})});var pj=Object.keys(pt).sort(function(a,b){return pt[b]-pt[a]}).slice(0,6).map(function(p){return '<div class="stat"><b>'+vnd(pt[p])+' đ</b><span>'+esc(p)+'</span></div>'}).join('');
+  $('stats').innerHTML='<div class="stat"><b>'+all.length+'</b><span>chứng từ</span></div><div class="stat"><b>'+vnd(sum)+' đ</b><span>tổng số tiền</span></div><div class="stat"><b>'+open+'</b><span>chưa hoàn ứng</span></div><div class="stat"><b>'+mm+'</b><span>khoản hoàn ứng bị chênh lệch</span></div>'+pj}
+ else{all.forEach(function(r){sum+=+r.fee||0});
+  var go=all.filter(function(r){return r.st=='Đang giao'||r.st=='Chờ gửi'}).length;
+  $('stats').innerHTML='<div class="stat"><b>'+all.length+'</b><span>đơn gửi</span></div><div class="stat"><b>'+go+'</b><span>đang chờ hoặc đang giao</span></div><div class="stat"><b>'+vnd(sum)+' đ</b><span>tổng phí vận chuyển</span></div>'}}
+function setTab(t){cur=t;$('t-pay').setAttribute('aria-selected',t=='pay');$('t-ship').setAttribute('aria-selected',t=='ship');$('t-dir').setAttribute('aria-selected',t=='dir');
+ var C=CFG[t];$('f').innerHTML='<option value="">'+C.filterLabel+'</option>'+C.filterOpts.map(function(o){return '<option>'+o+'</option>'}).join('');$('q').value='';$('f').hidden=!C.filterOpts.length;$('impb').hidden=t=='ship';$('mgb').hidden=t!='dir';render()}
+function alRow(p,a){return '<div class="alr"><input class="ap" list="dl-proj" placeholder="Công trình" value="'+esc(p)+'"><input class="aa" type="number" min="0" step="any" placeholder="Số tiền" value="'+(a==null?'':a)+'"><button type="button" class="ax" aria-label="Xóa dòng">&times;</button></div>'}
+function alCalc(){var t=+($('fm').elements['amt']||{}).value||0,s=0;document.querySelectorAll('#alrows .aa').forEach(function(i){s+=+i.value||0});return{t:t,s:s,d:t-s}}
+function alSum(){var el=$('alsum');if(!el)return;var c=alCalc();var F=$('fm').elements,vt=(F['vat']||{}).value||'',g=+(F['gross']||{}).value||0,tx=g-c.t,ex=Math.round(c.t*(parseFloat(vt)||0)/100),b1=Math.abs(c.d)>1,b2=g&&(tx<-1||(vt&&Math.abs(tx-ex)>10));el.textContent='Đã phân bổ '+vnd(c.s)+' / '+vnd(c.t)+' đ'+(b1?(c.d>0?' – còn thiếu ':' – vượt ')+vnd(Math.abs(c.d)):' – khớp')+(g?' · Thuế '+vnd(tx)+(b2?(vt?' – lệch so với thuế '+vt+' (dự kiến '+vnd(ex)+')':' – tiền có thuế nhỏ hơn chưa thuế'):' – khớp'):'');el.style.color=(b1||b2)?'var(--bad-t)':'var(--ok-t)'}
+function rcRow(n,t,a){return '<div class="alr rcr"><input class="rn" placeholder="Tên người nhận" value="'+esc(n)+'"><input class="rt" placeholder="Số điện thoại" value="'+esc(t)+'"><button type="button" class="rx" aria-label="Xóa người nhận">&times;</button><input class="ra" placeholder="Địa chỉ nhận hàng" value="'+esc(a)+'"></div>'}
+function readRcvs(){return Array.prototype.map.call(document.querySelectorAll('#rcrows .alr'),function(x){return{n:x.querySelector('.rn').value.trim(),t:x.querySelector('.rt').value.trim(),a:x.querySelector('.ra').value.trim()}}).filter(function(a){return a.n||a.t||a.a})}
+function wireRcvs(){var b=$('rcadd');if(!b)return;b.onclick=function(){$('rcrows').insertAdjacentHTML('beforeend',rcRow('','',''))};$('rcrows').onclick=function(e){var x=e.target.closest('.rx');if(x)x.parentNode.remove()};if(!document.querySelector('#rcrows .alr'))b.onclick()}
+function whoList(){var m=dirFind((($('fm').elements['rcv'])||{}).value||'');$('dl-who').innerHTML=((m&&m.rcvs)||[]).map(function(x){return '<option value="'+esc(x.n)+'">'}).join('')}
+function fillR(x){var F=$('fm').elements;F['who'].value=x.n||'';F['tel'].value=x.t||'';F['addr'].value=x.a||''}
+function pickWho(v){if(cur!='ship')return;var m=dirFind($('fm').elements['rcv'].value),x=m&&(m.rcvs||[]).filter(function(y){return y.n.toLowerCase()==v.trim().toLowerCase()})[0];if(x)fillR(x)}
+function itRow(n,q,u){return '<div class="alr itr"><input class="in" placeholder="Tên hàng / mô tả" value="'+esc(n)+'"><input class="iq" type="number" min="0" step="any" placeholder="SL" value="'+(q==null?'':q)+'"><input class="iu" placeholder="Đơn vị" value="'+esc(u)+'"><button type="button" class="ix" aria-label="Xóa dòng">&times;</button></div>'}
+function readItems(){return Array.prototype.map.call(document.querySelectorAll('#irows .alr'),function(x){return{n:x.querySelector('.in').value.trim(),q:x.querySelector('.iq').value,u:x.querySelector('.iu').value.trim()}}).filter(function(a){return a.n})}
+function wireItems(){var b=$('iadd');if(!b)return;b.onclick=function(){$('irows').insertAdjacentHTML('beforeend',itRow('','',''))};$('irows').onclick=function(e){var x=e.target.closest('.ix');if(x)x.parentNode.remove()};if(!document.querySelector('#irows .alr'))b.onclick()}
+function readAlloc(){return Array.prototype.map.call(document.querySelectorAll('#alrows .alr'),function(x){return{p:x.querySelector('.ap').value.trim(),a:+x.querySelector('.aa').value||0}}).filter(function(a){return a.p||a.a})}
+function wireAlloc(){var b=$('aladd');if(!b)return;b.onclick=function(){var c=alCalc();$('alrows').insertAdjacentHTML('beforeend',alRow('',c.d>0?c.d:''));alSum()};$('alrows').onclick=function(e){var x=e.target.closest('.ax');if(x){x.parentNode.remove();alSum()}};if(!document.querySelector('#alrows .alr'))b.onclick();alSum()}
+function openForm(i){editing=i;var C=CFG[cur],r=i>=0?D[cur][i]:{};
+ $('fm').innerHTML='<h2>'+(i>=0?'Sửa dòng ':'Thêm dòng – ')+C.title.toLowerCase()+'</h2>'+C.cols.map(function(c){var v=r[c.k]==null?'':r[c.k],n=' name="'+c.k+'"',cl=c.w?' class="w"':'';
+  if(c.t=='rcvs')return '<div class="alloc"><span class="lbl">'+c.l+'</span><div id="rcrows">'+(r.rcvs||[]).map(function(a){return rcRow(a.n,a.t,a.a)}).join('')+'</div><button type="button" class="btn" id="rcadd">+ Thêm người nhận</button></div>';
+  if(c.t=='diff')return '';
+  if(c.t=='items')return '<div class="alloc"><span class="lbl">'+c.l+'</span><div id="irows">'+(r.items||[]).map(function(a){return itRow(a.n,a.q,a.u)}).join('')+'</div><button type="button" class="btn" id="iadd">+ Thêm mặt hàng</button></div>';
+  if(c.t=='alloc')return '<div class="alloc" id="alloc"><span class="lbl">'+c.l+'</span><div id="alrows">'+(r.alloc||[]).map(function(a){return alRow(a.p,a.a)}).join('')+'</div><button type="button" class="btn" id="aladd">+ Thêm công trình</button><div id="alsum"></div></div>';
+  if(c.t=='chk')return '<label class="c"><input type="checkbox"'+n+(v?' checked':'')+'>'+c.l+'</label>';
+  if(c.t=='sel')return '<label'+cl+'>'+c.l+'<select'+n+'><option value=""></option>'+c.o.map(function(o){return '<option'+(o==v?' selected':'')+'>'+o+'</option>'}).join('')+'</select></label>';
+  if(c.t=='area')return '<label class="w">'+c.l+'<textarea rows="2"'+n+'>'+esc(v)+'</textarea></label>';
+  var ty=c.t=='date'?'date':c.t=='money'?'number':'text';
+  return '<label'+cl+'>'+c.l+'<input type="'+ty+'"'+(c.t=='money'?' min="0" step="any"':'')+n+(c.lk?' list="dl-dir" autocomplete="off"':'')+(c.lw?' list="dl-who" autocomplete="off"':'')+' value="'+esc(v)+'"></label>'}).join('')
+  +'<div class="fa"><button type="button" class="btn" id="cx">Hủy</button><button type="submit" class="btn p">Lưu dòng</button></div>';
+ $('cx').onclick=function(){$('dlg').close()};wireAlloc();wireItems();wireRcvs();whoList();$('dlg').showModal()}
+$('fm').onsubmit=function(e){e.preventDefault();var C=CFG[cur],r={},fd=new FormData($('fm'));
+ C.cols.forEach(function(c){r[c.k]=c.t=='rcvs'?readRcvs():c.t=='items'?readItems():c.t=='alloc'?readAlloc():c.t=='chk'?fd.get(c.k)!==null:c.t=='money'?(+fd.get(c.k)||0):(fd.get(c.k)||'')});
+ if(editing>=0)D[cur][editing]=r;else D[cur].push(r);save();$('dlg').close();render()};
+$('tb').onclick=function(e){var b=e.target.closest('button');if(!b){var tr=e.target.closest('tr');b=tr&&tr.querySelector('button[data-e]')}if(!b)return;
+ if(b.dataset.e!=null)openForm(+b.dataset.e);
+ else if(b.dataset.d!=null){askDel(+b.dataset.d)}};
+$('add').onclick=function(){openForm(-1)};
+$('fm').oninput=function(e){var t=e.target;if(t.classList.contains('aa')||t.name=='amt'||t.name=='vat'||t.name=='gross')alSum();if(t.name=='who')pickWho(t.value);if(t.getAttribute('list')=='dl-dir'){var m=dirFind(t.value);if(m){var F=$('fm').elements;if(cur=='pay'&&F['acc']&&m.acc)F['acc'].value=m.acc;if(cur=='ship'){whoList();var x=(m.rcvs||[])[0];if(x)fillR(x)}}}};
+$('q').oninput=render;$('f').onchange=render;
+$('t-pay').onclick=function(){setTab('pay')};$('t-ship').onclick=function(){setTab('ship')};$('t-dir').onclick=function(){setTab('dir')};
+$('csv').onclick=function(){var C=CFG[cur],q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};
+ var out=[['STT'].concat(C.cols.map(function(c){return c.l}))].concat(D[cur].map(function(r,i){return [i+1].concat(C.cols.map(function(c){return c.t=='chk'?(r[c.k]?'Có':''):c.t=='rcvs'?(r[c.k]||[]).map(function(a){return a.n+' '+a.t+' '+a.a}).join('; '):c.t=='diff'?((diffOf(r)||{}).t||''):c.t=='items'?(r[c.k]||[]).map(function(a){return a.n+' x'+a.q+' '+a.u}).join('; '):c.t=='alloc'?(r[c.k]||[]).map(function(a){return a.p+': '+a.a}).join('; '):r[c.k]}))}));
+ var blob=new Blob(['\ufeff'+out.map(function(l){return l.map(q).join(',')}).join('\n')],{type:'text/csv'});
+ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=({pay:'thanh-toan',ship:'gui-hang',dir:'danh-ba'})[cur]+'.csv';document.body.appendChild(a);a.click();a.remove()};
+$('theme').onclick=function(){var d=document.documentElement,dark=d.dataset.theme?d.dataset.theme=='dark':matchMedia('(prefers-color-scheme: dark)').matches;d.dataset.theme=dark?'light':'dark'};
+function tsv(s){var rows=[],row=[],f='',q=false;for(var i=0;i<s.length;i++){var ch=s[i];if(q){if(ch=='"'){if(s[i+1]=='"'){f+='"';i++}else q=false}else f+=ch}else if(ch=='"'&&f==='')q=true;else if(ch=='\t'){row.push(f);f=''}else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&s[i+1]=='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=ch}if(f!==''||row.length){row.push(f);rows.push(row)}return rows}
+function dirFind(v){v=v.trim().toLowerCase();return D.dir.filter(function(d){return d.name.trim().toLowerCase()==v||(d.alias||'').split(';').some(function(a){return a.trim().toLowerCase()==v})})[0]}
+var STOP=['công','ty','cty','cp','cổ','phần','tnhh','mtv','tm','dv','và','chi','nhánh','hộ','kd'];
+function core(n){return n.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(function(w){return w&&STOP.indexOf(w)<0})}
+function mergeDir(){var n=0,wa=D.dir.filter(function(d){return d.acc});D.dir=D.dir.filter(function(e){if(e.acc)return true;var ce=core(e.name);if(!ce.length)return true;var c=wa.filter(function(p){var cp=core(p.name);return ce.every(function(w){return cp.indexOf(w)>-1})});if(c.length!=1)return true;var p=c[0];(e.rcvs||[]).forEach(function(x){addR(p,x)});p.alias=(p.alias?p.alias+'; ':'')+e.name;n++;return false});return n}
+function addR(m,x){m.rcvs=m.rcvs||[];if(!m.rcvs.some(function(y){return (y.a||'')==x.a&&(y.n||'')==x.n&&(y.t||'')==x.t}))m.rcvs.push(x)}
+function upsert(o){var m=dirFind(o.name),ne=0;if(!m){m={name:o.name.trim(),alias:'',acc:'',note:'',rcvs:[]};D.dir.push(m);ne=1}if(o.acc)m.acc=o.acc;if(o.n||o.t||o.a)addR(m,{n:o.n||'',t:o.t||'',a:o.a||''});return ne}
+function upsertOld(o){var k=o.name.trim().toLowerCase(),m=dirFind(o.name);if(m){['acc','addr','contact','tel'].forEach(function(f){if(o[f])m[f]=o[f]});return 0}D.dir.push({name:o.name.trim(),acc:o.acc||'',addr:o.addr||'',contact:o.contact||'',tel:o.tel||'',note:''});return 1}
+function importDir(txt){var add=0,upd=0;tsv(txt).forEach(function(r){var a=(r[0]||'').trim(),b=(r[1]||'').trim(),c=(r[2]||'').trim(),d=(r[3]||'').trim();if(a.toUpperCase()=='ĐƠN VỊ'||!(a||c))return;
+ var tel=(d.match(/S[DĐ]T\s*:?\s*([^\n]*)/i)||[])[1]||'',ad=(d.match(/Địa chỉ\s*:?\s*([\s\S]*)/i)||[])[1]||'',ct=d.split(/S[DĐ]T|Địa chỉ|Đc:/i)[0].replace(/[-\s]+$/,'').trim();
+ if(a&&b){upsert({name:a,acc:b})?add++:upd++}
+ var rn=c||(b?'':a);if(rn&&d){upsert({name:rn,n:ct,t:tel.trim(),a:ad.trim()})?add++:upd++}});
+ var mg=mergeDir();save();render();return{add:add,upd:upd,mg:mg}}
+var delIdx=-1;function askDel(i){delIdx=i;var r=D[cur][i]||{},nm=r.name||r.desc||r.rcv||'';$('cft').textContent='Xóa dòng '+(i+1)+(nm?' ('+nm+')':'')+'? Thao tác này không hoàn tác được.';$('cf').showModal()}
+$('cfn').onclick=function(){$('cf').close()};
+$('cfy').onclick=function(){if(delIdx>=0){D[cur].splice(delIdx,1);delIdx=-1;save();render()}$('cf').close()};
+function mon(s){return +String(s||'').replace(/[^\d]/g,'')||0}
+function iso(s){var m=String(s||'').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);return m?m[3]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[1]).slice(-2):''}
+function pick(v,o){v=(v||'').trim();return o.filter(function(x){return x.toLowerCase()==v.toLowerCase()})[0]||v}
+function importPay(txt){var add=0,skip=0,P=CFG.pay.cols,op=function(k){return P.filter(function(c){return c.k==k})[0].o};
+ tsv(txt).forEach(function(r){var A=r.map(function(x){return (x||'').trim()});if(A[0].toUpperCase()=='STT'||(!A[1]&&!A[3]&&!A[4]))return;
+ var amt=mon(A[4]),u=A[6],acc=A[7],d=dirFind(u);if(!acc&&d)acc=d.acc||'';
+ var o={date:iso(A[1]),type:pick(A[2],op('type')),desc:A[3],amt:amt,alloc:(A[5]||amt)?[{p:A[5],a:amt}]:[],vat:'',gross:0,unit:u,acc:acc,inv:/^(true|có|x|1)$/i.test(A[8]),tt1:pick(A[9],op('tt1')),tt2:pick(A[10],op('tt2')),rdate:iso(A[11]),ramt:0,note:A[12]||''};
+ var dup=D.pay.some(function(x){return x.date==o.date&&x.unit==o.unit&&x.desc==o.desc&&(+x.amt||0)==amt});if(dup){skip++;return}D.pay.push(o);add++});
+ save();render();return{add:add,skip:skip}}
+function tsvOut(){var C=CFG[cur],q=function(v){v=String(v==null?'':v);return /[\t\n"]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ var rows=[['STT'].concat(C.cols.map(function(c){return c.l}))].concat(D[cur].map(function(r,i){return [i+1].concat(C.cols.map(function(c){var v=r[c.k];return c.t=='chk'?(v?'TRUE':'FALSE'):c.t=='date'?dmy(v):c.t=='diff'?((diffOf(r)||{}).t||''):c.t=='rcvs'?(v||[]).map(function(a){return a.n+' '+a.t+' '+a.a}).join('; '):c.t=='items'?(v||[]).map(function(a){return a.n+' x'+a.q+' '+a.u}).join('; '):c.t=='alloc'?(v||[]).map(function(a){return a.p+': '+a.a}).join('; '):v}))}));
+ return rows.map(function(l){return l.map(q).join('\t')}).join('\n')}
+$('cpb').onclick=function(){var t=tsvOut(),b=$('cpb');function ok(){b.textContent='Đã sao chép – dán vào Sheets';setTimeout(function(){b.textContent='Sao chép sang Google Sheets'},3000)}
+ function fb(){$('impgo').hidden=true;$('imph').textContent='Sao chép sang Google Sheets';$('impp').textContent='Bấm vào ô bên dưới, nhấn Ctrl+A rồi Ctrl+C. Sau đó mở Google Sheets, chọn ô A1 và nhấn Ctrl+V.';$('impt').value=t;$('impr').textContent='';$('imp').showModal();$('impt').select()}
+ try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}};
+$('mgb').onclick=function(){var n=mergeDir(),b=$('mgb');save();render();b.textContent='Đã gộp '+n+' mục';setTimeout(function(){b.textContent='Gộp trùng danh bạ'},2500)};
+$('impb').onclick=function(){$('impgo').hidden=false;var pay=cur=='pay';$('imph').textContent=pay?'Nhập thanh toán từ Google Sheets':'Nhập danh bạ từ Google Sheets';$('impp').textContent=pay?'Trong Google Sheets, bôi đen các cột A đến M (kể cả dòng tiêu đề, theo thứ tự: STT, Ngày lập chứng từ, Loại chứng từ, Nội dung, Số tiền, Công trình, Đơn vị, Số tài khoản, Hóa đơn, Tình trạng thanh toán, Trạng thái hoàn ứng, Ngày hoàn ứng, Ghi chú), nhấn Ctrl+C rồi dán vào ô dưới. Dòng trùng với dòng đã có sẽ được bỏ qua.':'Trong Google Sheets, bôi đen các cột A đến D (kể cả dòng tiêu đề), nhấn Ctrl+C rồi dán vào ô dưới. Đơn vị đã có trong danh bạ sẽ được cập nhật, không bị trùng.';$('impt').value='';$('impr').textContent='';$('imp').showModal()};
+$('impx').onclick=function(){$('imp').close()};
+$('impgo').onclick=function(){var t=$('impt').value;if(!t.trim()){$('impr').textContent='Chưa có dữ liệu. Hãy dán các cột đã sao chép từ Google Sheets.';return}if(cur=='pay'){var q=importPay(t);$('impr').textContent='Đã thêm '+q.add+' dòng, bỏ qua '+q.skip+' dòng trùng.';return}var r=importDir(t);$('impr').textContent='Đã thêm '+r.add+' mục mới, cập nhật '+r.upd+' mục có sẵn, gộp '+r.mg+' mục trùng công ty.'};
+setTab('pay');
+(async function(){try{var c=(window.claude&&claude.use)?await claude.use('db'):null;if(!c){setSt('local');return}DB=c;var ks=['pay','ship','dir'],got=0,res=await Promise.all(ks.map(function(k){return DB.doc('data/'+k).get()}));
+ res.forEach(function(s,i){if(s.exists){try{D[ks[i]]=JSON.parse(s.data().j);got++}catch(e){}}});
+ try{localStorage.setItem(SK,JSON.stringify(D))}catch(e){}dbReady=true;if(got<3)dbSave();else setSt('ok');render()}catch(e){setSt('local')}})();
+</script>
+</body>
+</html>
